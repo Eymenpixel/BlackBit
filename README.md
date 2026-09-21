@@ -1,6 +1,6 @@
 # Blackbit Repository
 
-![License](https://img.shields.io/be-MIT-yellow.svg)
+![License](https://img.shields.io/badge/license-MIT-yellow)
 ![Status](shields.io/badge/Status-Development-orange)
 ![Platform](https://io/badge/Platform-x86__64-blue)
 
