@@ -1,8 +1,10 @@
 # Blackbit Repository
 
-![Licensemg.shields.io/badge/License-MIT-yellow.svg
-![Statusimg.shields.io/badge/Status-Development-orange
-![Platform](https://img.shields.io/badge/Platform-x86lackbit Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketleri, güncellemeleri ve sistem bileşenlerini barındırır.
+![License](https://img.shields.io/be-MIT-yellow.svg
+![Status](shields.io/badge/Status-Development-orange
+![Platform](https://io/badge/Platform-x86__64-blue
+
+Blackbit Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketleri, güncellemeleri ve sistem bileşenlerini barındırır.
 
 Bu depo; paket dosyalarını, depo indekslerini ve sistem tarafından kullanılan güncelleme verilerini içerir.
 
@@ -12,8 +14,7 @@ Blackbit'in resmi paket yöneticisi:
 
 👉 **Kaya Package Manager**
 
-GitHub:
-https://github.com/Eymenpixel/Kaya
+GitHub: https://github.com/Eymenpixel/Kaya
 
 ## Amaç
 
@@ -35,7 +36,7 @@ Blackbit halen aktif geliştirme aşamasındadır. Paket yapıları ve sistem bi
 >
 > İnternette paylaşılan "modifiye sürüm", "özel sürüm", "erken güncelleme" veya benzeri içeriklere güvenmeyin.
 >
-> Resmi olmayan kaynaklardan indirilen kalıplar (ISO dosyaları) ve güncellemeler sistem güvenliğinizi riske atabilir.
+> Resmi olmayan kaynaklardan indirilen ISO dosyaları ve güncellemeler sistem güvenliğinizi riske atabilir.
 >
 > Blackbit için yayınlanan tüm resmi güncelleştirmeler bu depo üzerinden duyurulur ve dağıtılır.
 
