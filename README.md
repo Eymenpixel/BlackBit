@@ -1,8 +1,8 @@
 # Blackbit Repository
 
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
-shields.io/badge/Status-Development-orange
-![Platform](https://img.shields.io/badge/Platform-x86__ckbit Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketleri, güncellemeleri ve sistem bileşenlerini barındırır.
+(shields.io/badge/Status-Development-orange)
+![Platform](https://img.shields.io/badge/Platform-x86__ckbit) Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketleri, güncellemeleri ve sistem bileşenlerini barındırır.
 
 Bu depo; paket dosyalarını, depo indekslerini ve sistem tarafından kullanılan güncelleme verilerini içerir.
 
