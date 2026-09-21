@@ -16,12 +16,5 @@ Blackbit kullanıcılarına güvenli, hızlı ve tutarlı bir paket yönetim den
 - Paket metadataları
 - Kaya Paket Yöneticisi kaynakları
 
-## Kaya Paket Yöneticisi
-
-Örnek komutlar:
-
-```bash
-kaya update
-kaya install paket-adi
-kaya remove paket-adi
-kaya search paket-adi
+  ## Uyarı!
+  Resmi BlackBit güncellemeleri ve bootable dosyası buradadır! lütfen başka bir kaynaktan indirmeyin veya güncelleştirmelere inanmayın.
