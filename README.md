@@ -1,8 +1,8 @@
 # Blackbit Repository
 
 ![License](https://img.shields.io/badge/license-MIT-yellow)
-![Status](shields.io/badge/Status-Development-orange)
-![Platform](https://io/badge/Platform-x86__64-blue)
+![Status](https://shields.io/badge/Status-Development-orange)
+![Platform](https://shields.io/badge/Platform-x86__64-blue)
 
 Blackbit Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketleri, güncellemeleri ve sistem bileşenlerini barındırır.
 
