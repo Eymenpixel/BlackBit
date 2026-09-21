@@ -1,16 +1,19 @@
 # Blackbit Repository
 
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Status](shields.io/badge/Status-Development-orange)
-![Platform](https://img.shields.io/badge/Platform-x86__ckbit) Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketleri, güncellemeleri ve sistem bileşenlerini barındırır.
+![Licensemg.shields.io/badge/License-MIT-yellow.svg
+![Statusimg.shields.io/badge/Status-Development-orange
+![Platform](https://img.shields.io/badge/Platform-x86lackbit Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketleri, güncellemeleri ve sistem bileşenlerini barındırır.
 
 Bu depo; paket dosyalarını, depo indekslerini ve sistem tarafından kullanılan güncelleme verilerini içerir.
 
 ## Paket Yöneticisi
 
-Blackbit, paket yönetimi için Kaya Paket Yöneticisini kullanır:
+Blackbit'in resmi paket yöneticisi:
 
-👉 https://github.com/Eymenpixel/Kaya
+👉 **Kaya Package Manager**
+
+GitHub:
+https://github.com/Eymenpixel/Kaya
 
 ## Amaç
 
@@ -24,15 +27,17 @@ Blackbit, paket yönetimi için Kaya Paket Yöneticisini kullanır:
 Blackbit halen aktif geliştirme aşamasındadır. Paket yapıları ve sistem bileşenleri sürümler arasında değişebilir.
 
 > [!WARNING]
-> Blackbit'i yalnızca resmi kaynaklardan indirmeniz tavsiye edilir.
+> Blackbit'i yalnızca resmi kaynaklardan indirmeniz önerilir.
 >
-> Güvenliğiniz için üçüncü taraf web sitelerinden, yeniden paketlenmiş ISO dosyalarından veya doğrulanmamış kaynaklardan gelen sistem kalıplarını kullanmayın.
+> Üçüncü taraf sitelerden, doğrulanmamış kaynaklardan veya yeniden paketlenmiş ISO dosyalarından gelen sürümleri kullanmayın.
 >
-> Blackbit'in resmi sürümleri, güncellemeleri ve dağıtım dosyaları yalnızca bu organizasyon tarafından yayımlanır.
+> Resmi Blackbit sürümleri, güncellemeleri ve depo içerikleri yalnızca resmi Blackbit depoları üzerinden yayımlanır.
 >
-> Sosyal medya, forum veya üçüncü taraf kaynaklarda paylaşılan "özel sürüm", "modifiye sürüm" veya "erken güncelleme" içeriklerine güvenmeyin.
+> İnternette paylaşılan "modifiye sürüm", "özel sürüm", "erken güncelleme" veya benzeri içeriklere güvenmeyin.
 >
-> Resmi güncellemeler yalnızca resmi Blackbit depoları üzerinden yayımlanır.
+> Resmi olmayan kaynaklardan indirilen kalıplar (ISO dosyaları) ve güncellemeler sistem güvenliğinizi riske atabilir.
+>
+> Blackbit için yayınlanan tüm resmi güncelleştirmeler bu depo üzerinden duyurulur ve dağıtılır.
 
 ---
 
