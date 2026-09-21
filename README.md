@@ -14,7 +14,6 @@ Blackbit kullanıcılarına güvenli, hızlı ve tutarlı bir paket yönetim den
 - Sistem güncellemeleri
 - Paket indeksleri
 - Paket metadataları
-- Kaya Paket Yöneticisi kaynakları
 
   ## Uyarı!
   Resmi BlackBit güncellemeleri ve bootable dosyası buradadır! lütfen başka bir kaynaktan indirmeyin veya güncelleştirmelere inanmayın.
