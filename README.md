@@ -8,6 +8,10 @@ Blackbit Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketler
 
 Bu depo; paket dosyalarını, depo indekslerini ve sistem tarafından kullanılan güncelleme verilerini içerir.
 
+## Kernel kaynak kodu
+
+Blackbit kernelinin kaynak kodu, bağımsız derleme ve QEMU komut testleriyle birlikte [`kernel/`](kernel/) altındadır. WSL2 Ubuntu üzerinde `cd kernel && make test` komutuyla doğrulanabilir.
+
 ## Paket Yöneticisi
 
 Blackbit'in resmi paket yöneticisi:
