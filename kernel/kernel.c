@@ -304,7 +304,7 @@ static void banner(void) {
     puts(" | |_) | | (_| | (__|   <| |_) | | |_ "); putc('\n');
     puts(" |____/|_|\\__,_|\\___|_|\\_\\_.__/|_|\\__|"); putc('\n');
     setcolor(LIME,BLACK); puts("Blackbit OS 0.1  |  x86 protected-mode kernel"); putc('\n');
-    setcolor(DARK,BLACK); puts("Booted by Blackbit ASM BIOS loader; Multiboot2 memory-map handoff."); putc('\n');
+    setcolor(DARK,BLACK); puts("Multiboot2 memory-map handoff; Blackbit kernel console."); putc('\n');
     puts("Type 'help' to explore the kernel command console."); putc('\n'); putc('\n');
     setcolor(LIGHT,BLACK);
 }

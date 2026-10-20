@@ -1,6 +1,6 @@
 # Blackbit kernel
 
-A freestanding x86 protected-mode kernel booted by a two-stage assembly BIOS loader. The loader reads the kernel from a raw disk image, gathers an E820 memory map, enters protected mode, and passes a Multiboot2-compatible handoff. GRUB ISO images are still available as a secondary boot path. The kernel currently provides a VGA text console, polled PS/2 keyboard input, a small RAM-only virtual filesystem, basic CPU/RAM/RTC information, and a command interpreter. This is an early kernel foundation: it does not yet implement a scheduler, user mode, network stack, general block-device/filesystem drivers, ACPI, or account authorization.
+A freestanding kernel with a 32-bit x86 port and a 64-bit x86 port. The x32 primary boot path is a two-stage assembly BIOS loader that reads a raw disk image, gathers an E820 memory map, and passes a Multiboot2-compatible handoff. The x64 port enters long mode from a Multiboot2 GRUB handoff. Both x86 ports build the same command kernel with VGA text output, polled PS/2 keyboard input, a small RAM-only virtual filesystem, CPU/RAM information, and Kaya host-bridge commands. Separate ARM64 and ARM32 assembly bootstrap payloads are included; they only initialize PL011 serial output and halt, and are not ports of the command kernel.
 
 ## Build and run (WSL2 Ubuntu)
 
@@ -8,12 +8,16 @@ Install `gcc`, `make`, `binutils`, `grub-pc-bin`, `grub-common`, `xorriso`, `qem
 
 ```sh
 cd kernel
-make          # builds UI/shell ISO images and the custom BIOS disk image
+make          # builds x32 UI/shell ISO images, x64 ISO, and x32 BIOS disk image
+make iso-x64  # builds the x64 GRUB ISO
 make test     # boots a test build in QEMU and runs kernel command checks
+make test-x64 # boots the x64 build in QEMU and runs the same command checks
 make run      # builds Kaya and launches the BIOS image with its serial bridge
 ```
 
-The primary boot image is `build/blackbit-bios.img` (16 MiB); setup data is stored at LBA 2048, away from boot stages and the kernel. GRUB images are `build/blackbit-ui.iso` and `build/blackbit-shell.iso`. `make test` exits nonzero if a command check fails. The self-test checks the real kernel command dispatcher under QEMU; commands needing missing hardware subsystems are checked to report their unavailability clearly.
+The primary x32 boot image is `build/blackbit-bios.img` (16 MiB); setup data is stored at LBA 2048, away from boot stages and the kernel. x32 GRUB images are `build/blackbit-ui.iso` and `build/blackbit-shell.iso`; the x64 GRUB image is `build/blackbit-x64.iso`. `make test` and `make test-x64` exit nonzero if any command check fails. Both QEMU self-tests currently pass 90 checks.
+
+`bash build-deliverables.sh` writes the requested 8 files to `C:\Users\srhtm\Downloads\biso` from WSL. It requires `aarch64-linux-gnu-{as,ld,objcopy}` and `arm-linux-gnueabihf-{as,ld,objcopy}` for ARM outputs. The x32 and x64 ISO/IMG files are bootable; ARM `.img` files are bootstrap kernel payloads, and ARM `.iso` files are data bundles because this environment has no ARM EFI GRUB target or ARM QEMU runtime. See the output folder's README before using those experimental files.
 
 ## Kaya integration
 

@@ -2,11 +2,12 @@ CC := gcc
 AS := gcc
 LD := ld
 CFLAGS := -m32 -std=gnu11 -O2 -Wall -Wextra -ffreestanding -fno-stack-protector -fno-pic -fno-pie -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables
+CFLAGS64 := -m64 -std=gnu11 -O2 -Wall -Wextra -ffreestanding -fno-stack-protector -fno-pic -fno-pie -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mno-sse -mno-mmx
 LDFLAGS := -m elf_i386 -T linker.ld -nostdlib
 BUILD := build
 
-.PHONY: all iso run clean shell ui test boot-image run-bios kaya
-all: iso boot-image
+.PHONY: all iso iso-x64 run clean shell ui test test-x64 boot-image run-bios kaya
+all: iso iso-x64 boot-image
 
 $(BUILD):
 	mkdir -p $(BUILD)
@@ -43,6 +44,23 @@ shell: $(BUILD)/kernel-shell.elf $(BUILD)/iso-shell/boot/grub/grub.cfg
 	grub-mkrescue -o $(BUILD)/blackbit-shell.iso $(BUILD)/iso-shell
 
 iso: ui shell
+
+$(BUILD)/boot64.o: boot64.S | $(BUILD)
+	$(AS) -m64 -c $< -o $@
+
+$(BUILD)/kernel64.o: kernel.c | $(BUILD)
+	$(CC) $(CFLAGS64) -DBLACKBIT_UI=0 -c $< -o $@
+
+$(BUILD)/kernel64.elf: $(BUILD)/boot64.o $(BUILD)/kernel64.o linker64.ld
+	$(LD) -m elf_x86_64 -T linker64.ld -nostdlib -o $@ $(BUILD)/boot64.o $(BUILD)/kernel64.o
+
+$(BUILD)/iso-x64/boot/grub/grub.cfg: boot/grub/grub.cfg | $(BUILD)
+	mkdir -p $(BUILD)/iso-x64/boot/grub
+	cp $< $@
+
+iso-x64: $(BUILD)/kernel64.elf $(BUILD)/iso-x64/boot/grub/grub.cfg
+	cp $(BUILD)/kernel64.elf $(BUILD)/iso-x64/boot/kernel.elf
+	grub-mkrescue -o $(BUILD)/blackbit-x64.iso $(BUILD)/iso-x64
 
 run: boot-image kaya
 	python3 ../tools/kaya_bridge.py
@@ -113,3 +131,20 @@ run-bios: run
 
 test: $(BUILD)/blackbit-test-bios.img
 	@set +e; timeout 10s qemu-system-i386 -drive file=$(BUILD)/blackbit-test-bios.img,format=raw,if=ide,index=0 -boot c -m 128M -display none -serial stdio -monitor none -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 >$(BUILD)/selftest.log 2>&1; rc=$$?; set -e; cat $(BUILD)/selftest.log; test $$rc -eq 33; grep -q "SELFTEST: .* passed, 0 failed" $(BUILD)/selftest.log
+
+$(BUILD)/kernel64-test.o: kernel.c | $(BUILD)
+	$(CC) $(CFLAGS64) -Wno-unused-function -DBLACKBIT_UI=0 -DBLACKBIT_SELFTEST=1 -c $< -o $@
+
+$(BUILD)/kernel64-test.elf: $(BUILD)/boot64.o $(BUILD)/kernel64-test.o linker64.ld
+	$(LD) -m elf_x86_64 -T linker64.ld -nostdlib -o $@ $(BUILD)/boot64.o $(BUILD)/kernel64-test.o
+
+$(BUILD)/iso-x64-test/boot/grub/grub.cfg: boot/grub/grub.cfg | $(BUILD)
+	mkdir -p $(BUILD)/iso-x64-test/boot/grub
+	cp $< $@
+
+$(BUILD)/blackbit-x64-test.iso: $(BUILD)/kernel64-test.elf $(BUILD)/iso-x64-test/boot/grub/grub.cfg
+	cp $(BUILD)/kernel64-test.elf $(BUILD)/iso-x64-test/boot/kernel.elf
+	grub-mkrescue -o $@ $(BUILD)/iso-x64-test
+
+test-x64: $(BUILD)/blackbit-x64-test.iso
+	@set +e; timeout 10s qemu-system-x86_64 -cdrom $(BUILD)/blackbit-x64-test.iso -boot d -m 128M -display none -serial stdio -monitor none -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 >$(BUILD)/selftest-x64.log 2>&1; rc=$$?; set -e; cat $(BUILD)/selftest-x64.log; test $$rc -eq 33; grep -q "SELFTEST: .* passed, 0 failed" $(BUILD)/selftest-x64.log
