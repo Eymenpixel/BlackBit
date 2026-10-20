@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eymenpixel/Kaya/blob/main/Kaya/schemas/plugin-v2.schema.json",
+  "title": "Kaya plugin manifest v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pluginFormat", "name", "version", "kind", "entry"],
+  "properties": {
+    "pluginFormat": { "const": 2 },
+    "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$" },
+    "description": { "type": "string", "maxLength": 512 },
+    "kind": { "enum": ["runtime", "package-manager", "virtual-machine", "terminal-theme", "integration"] },
+    "entry": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$" },
+    "provides": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$" } },
+    "requires": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$" } },
+    "capabilities": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z][a-z0-9._:-]{0,63}$" } }
+  }
+}

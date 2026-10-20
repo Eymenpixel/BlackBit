@@ -1,0 +1,10 @@
+#!/bin/sh
+# Kaya plugin "scratch": plays a Scratch .sb3 with TurboWarp CLI in a visible window.
+# kaya calls:  run <abs/path/to/project.sb3> [args...]
+sb3="$1"
+if ! command -v twcli >/dev/null 2>&1; then
+  echo "scratch plugin: 'twcli' kurulu değil. Kurmak için: pip install turbowarp-cli" >&2
+  echo "                (Chromium için: playwright install chromium)" >&2
+  exit 127
+fi
+exec twcli run "$sb3" -H

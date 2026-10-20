@@ -1,6 +1,6 @@
 # Blackbit kernel
 
-A freestanding x86 protected-mode kernel booted by GRUB Multiboot2. The kernel currently provides a VGA text console, polled PS/2 keyboard input, a small RAM-only virtual filesystem, basic CPU/RAM/RTC information, and a command interpreter. This is an early kernel foundation: it does not yet implement a scheduler, user mode, network stack, general block-device/filesystem drivers, ACPI, or account authorization.
+A freestanding x86 protected-mode kernel booted by a two-stage assembly BIOS loader. The loader reads the kernel from a raw disk image, gathers an E820 memory map, enters protected mode, and passes a Multiboot2-compatible handoff. GRUB ISO images are still available as a secondary boot path. The kernel currently provides a VGA text console, polled PS/2 keyboard input, a small RAM-only virtual filesystem, basic CPU/RAM/RTC information, and a command interpreter. This is an early kernel foundation: it does not yet implement a scheduler, user mode, network stack, general block-device/filesystem drivers, ACPI, or account authorization.
 
 ## Build and run (WSL2 Ubuntu)
 
@@ -8,12 +8,16 @@ Install `gcc`, `make`, `binutils`, `grub-pc-bin`, `grub-common`, `xorriso`, `qem
 
 ```sh
 cd kernel
-make          # builds UI and shell ISO images
+make          # builds UI/shell ISO images and the custom BIOS disk image
 make test     # boots a test build in QEMU and runs kernel command checks
-make run      # launches the UI edition in QEMU
+make run      # builds Kaya and launches the BIOS image with its serial bridge
 ```
 
-The output images are `build/blackbit-ui.iso` and `build/blackbit-shell.iso`. `make test` exits nonzero if a command check fails. The self-test checks the real kernel command dispatcher under QEMU; commands needing missing hardware subsystems are checked to report their unavailability clearly.
+The primary boot image is `build/blackbit-bios.img` (16 MiB); setup data is stored at LBA 2048, away from boot stages and the kernel. GRUB images are `build/blackbit-ui.iso` and `build/blackbit-shell.iso`. `make test` exits nonzero if a command check fails. The self-test checks the real kernel command dispatcher under QEMU; commands needing missing hardware subsystems are checked to report their unavailability clearly.
+
+## Kaya integration
+
+The imported Kaya snapshot is in `../Kaya/` (upstream commit `5f22988`) and contains 200 `.kay` packages. `make run` builds its POSIX development manager and forwards `forge` requests over a restricted QEMU serial bridge. A native kernel-side Kaya runtime is not yet implemented.
 
 ## Commands
 

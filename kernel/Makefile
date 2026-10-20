@@ -5,8 +5,8 @@ CFLAGS := -m32 -std=gnu11 -O2 -Wall -Wextra -ffreestanding -fno-stack-protector 
 LDFLAGS := -m elf_i386 -T linker.ld -nostdlib
 BUILD := build
 
-.PHONY: all iso run clean shell ui test
-all: iso
+.PHONY: all iso run clean shell ui test boot-image run-bios kaya
+all: iso boot-image
 
 $(BUILD):
 	mkdir -p $(BUILD)
@@ -44,8 +44,11 @@ shell: $(BUILD)/kernel-shell.elf $(BUILD)/iso-shell/boot/grub/grub.cfg
 
 iso: ui shell
 
-run: ui
-	qemu-system-i386 -cdrom $(BUILD)/blackbit-ui.iso -drive file=$(BUILD)/blackbit-data.img,format=raw,if=ide,index=0 -m 128M -no-reboot
+run: boot-image kaya
+	python3 ../tools/kaya_bridge.py
+
+kaya:
+	$(MAKE) -C ../Kaya/Kaya all
 
 clean:
 	rm -rf $(BUILD)
@@ -65,5 +68,48 @@ $(BUILD)/blackbit-test.iso: $(BUILD)/kernel-test.elf $(BUILD)/iso-test/boot/grub
 	cp $(BUILD)/kernel-test.elf $(BUILD)/iso-test/boot/kernel.elf
 	grub-mkrescue -o $@ $(BUILD)/iso-test
 
-test: $(BUILD)/blackbit-test.iso
-	@set +e; timeout 5s qemu-system-i386 -cdrom $(BUILD)/blackbit-test.iso -m 128M -display none -serial stdio -monitor none -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 >$(BUILD)/selftest.log 2>&1; rc=$$?; set -e; cat $(BUILD)/selftest.log; test $$rc -eq 33; grep -q "SELFTEST: .* passed, 0 failed" $(BUILD)/selftest.log
+$(BUILD)/stage1.elf: bootloader/stage1.S bootloader/stage1.ld | $(BUILD)
+	$(CC) -m32 -c $< -o $(BUILD)/stage1.o
+	$(LD) -m elf_i386 -T bootloader/stage1.ld -o $@ $(BUILD)/stage1.o
+
+$(BUILD)/stage1.bin: $(BUILD)/stage1.elf
+	objcopy -O binary $< $@
+
+$(BUILD)/kernel-ui.bin: $(BUILD)/kernel-ui.elf
+	objcopy -O binary $< $@
+
+$(BUILD)/kernel-shell.bin: $(BUILD)/kernel-shell.elf
+	objcopy -O binary $< $@
+
+$(BUILD)/kernel-test.bin: $(BUILD)/kernel-test.elf
+	objcopy -O binary $< $@
+
+$(BUILD)/stage2-ui.o: bootloader/stage2.S $(BUILD)/kernel-ui.bin
+	$(CC) -m32 -DKERNEL_BYTES=$$(stat -c%s $(BUILD)/kernel-ui.bin) -DKERNEL_SECTORS=$$(( ($$(stat -c%s $(BUILD)/kernel-ui.bin) + 511) / 512 )) -c $< -o $@
+
+$(BUILD)/stage2-test.o: bootloader/stage2.S $(BUILD)/kernel-test.bin
+	$(CC) -m32 -DKERNEL_BYTES=$$(stat -c%s $(BUILD)/kernel-test.bin) -DKERNEL_SECTORS=$$(( ($$(stat -c%s $(BUILD)/kernel-test.bin) + 511) / 512 )) -c $< -o $@
+
+$(BUILD)/stage2-ui.elf: $(BUILD)/stage2-ui.o bootloader/stage2.ld
+	$(LD) -m elf_i386 -T bootloader/stage2.ld -o $@ $(BUILD)/stage2-ui.o
+
+$(BUILD)/stage2-test.elf: $(BUILD)/stage2-test.o bootloader/stage2.ld
+	$(LD) -m elf_i386 -T bootloader/stage2.ld -o $@ $(BUILD)/stage2-test.o
+
+$(BUILD)/stage2-ui.bin: $(BUILD)/stage2-ui.elf
+	objcopy -O binary $< $@
+
+$(BUILD)/stage2-test.bin: $(BUILD)/stage2-test.elf
+	objcopy -O binary $< $@
+
+$(BUILD)/blackbit-bios.img: $(BUILD)/stage1.bin $(BUILD)/stage2-ui.bin $(BUILD)/kernel-ui.bin bootloader/make_image.py
+	python3 bootloader/make_image.py $(BUILD)/stage1.bin $(BUILD)/stage2-ui.bin $(BUILD)/kernel-ui.bin $@
+
+$(BUILD)/blackbit-test-bios.img: $(BUILD)/stage1.bin $(BUILD)/stage2-test.bin $(BUILD)/kernel-test.bin bootloader/make_image.py
+	python3 bootloader/make_image.py $(BUILD)/stage1.bin $(BUILD)/stage2-test.bin $(BUILD)/kernel-test.bin $@
+
+boot-image: $(BUILD)/blackbit-bios.img
+run-bios: run
+
+test: $(BUILD)/blackbit-test-bios.img
+	@set +e; timeout 10s qemu-system-i386 -drive file=$(BUILD)/blackbit-test-bios.img,format=raw,if=ide,index=0 -boot c -m 128M -display none -serial stdio -monitor none -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 >$(BUILD)/selftest.log 2>&1; rc=$$?; set -e; cat $(BUILD)/selftest.log; test $$rc -eq 33; grep -q "SELFTEST: .* passed, 0 failed" $(BUILD)/selftest.log

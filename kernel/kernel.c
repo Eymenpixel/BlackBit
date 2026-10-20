@@ -152,8 +152,9 @@ static void copy(char *d,const char *s,size_t cap) { size_t i=0; if(cap) { while
 static void outw(uint16_t port,uint16_t value) { __asm__ volatile("outw %0,%1"::"a"(value),"Nd"(port)); }
 static uint16_t inw(uint16_t port) { uint16_t value; __asm__ volatile("inw %1,%0":"=a"(value):"Nd"(port)); return value; }
 static int ata_wait(int data_ready) { for(unsigned i=0;i<1000000;i++){uint8_t s=inb(0x1F7);if(s&1)return 0;if(!(s&0x80)&&(!data_ready||(s&8)))return 1;}return 0; }
-static int ata_sector(int write_sector,uint8_t *data) {
-    outb(0x1F6,0xE0);outb(0x1F1,0);outb(0x1F2,1);outb(0x1F3,0);outb(0x1F4,8);outb(0x1F5,0);
+static int ata_sector(int write_sector,uint32_t lba,uint8_t *data) {
+    outb(0x1F6,(uint8_t)(0xE0|((lba>>24)&0x0F)));outb(0x1F1,0);outb(0x1F2,1);
+    outb(0x1F3,(uint8_t)lba);outb(0x1F4,(uint8_t)(lba>>8));outb(0x1F5,(uint8_t)(lba>>16));
     outb(0x1F7,write_sector?0x30:0x20);if(!ata_wait(1))return 0;
     if(write_sector){for(unsigned i=0;i<256;i++)outw(0x1F0,(uint16_t)data[i*2]|((uint16_t)data[i*2+1]<<8));outb(0x1F7,0xE7);return ata_wait(0);}
     for(unsigned i=0;i<256;i++){uint16_t v=inw(0x1F0);data[i*2]=(uint8_t)v;data[i*2+1]=(uint8_t)(v>>8);}return 1;
@@ -163,7 +164,7 @@ static int json_value(const char *json,const char *key,char *out,size_t cap) {
     const char *p=json;while(*p&&!contains(p,needle))p++;if(!*p)return 0;while(*p&&*p!=':')p++;if(!*p)return 0;p++;while(*p==' '||*p=='\t')p++;if(*p!='"')return 0;p++;size_t i=0;while(*p&&*p!='"'&&i+1<cap)out[i++]=*p++;out[i]=0;return *p=='"';
 }
 static int load_guest_config(void) {
-    uint8_t sector[512];if(!ata_sector(0,sector)||!contains((char *)sector,"BLACKBIT_CONFIG_V1"))return 0;
+    uint8_t sector[512]={0};if(!ata_sector(0,2048,sector)||!contains((char *)sector,"BLACKBIT_CONFIG_V1"))return 0;
     if(!json_value((char *)sector,"Lang",language,sizeof(language))||!json_value((char *)sector,"Keyboard",keyboard,sizeof(keyboard))||!json_value((char *)sector,"Username",user_name,sizeof(user_name))||!json_value((char *)sector,"Hostname",host_name,sizeof(host_name)))return 0;
     int dir=fs_new("/Blackbit",1);if(dir==-2)dir=fs_resolve("/Blackbit");if(dir>=0){int file=fs_new("/Blackbit/asd.json",0);if(file==-2)file=fs_resolve("/Blackbit/asd.json");if(file>=0)copy(fs[file].data,(char *)sector,FS_DATA);}return 1;
 }
@@ -171,7 +172,7 @@ static void save_guest_config(void) {
     uint8_t sector[512];for(unsigned i=0;i<512;i++)sector[i]=0;const char *parts[]={"{\"Format\":\"BLACKBIT_CONFIG_V1\",\"Lang\":\"","\",\"Keyboard\":\"","\",\"Username\":\"","\",\"Hostname\":\"","\"}\n"};
     size_t n=0;const char *p=parts[0];while(*p&&n<500)sector[n++]=(uint8_t)*p++;const char *values[]={language,keyboard,user_name,host_name};
     for(unsigned k=0;k<4;k++){p=values[k];while(*p&&n<500)sector[n++]=(uint8_t)*p++;p=parts[k+1];while(*p&&n<500)sector[n++]=(uint8_t)*p++;}sector[n]=0;
-    if(!ata_sector(1,sector))puts("Warning: persistent data disk unavailable; setup is not saved.\n");
+    if(!ata_sector(1,2048,sector))puts("Warning: persistent data disk unavailable; setup is not saved.\n");
     int dir=fs_new("/Blackbit",1);if(dir==-2)dir=fs_resolve("/Blackbit");if(dir>=0){int file=fs_new("/Blackbit/asd.json",0);if(file==-2)file=fs_resolve("/Blackbit/asd.json");if(file>=0)copy(fs[file].data,(char *)sector,FS_DATA);}
 }
 static void fs_init(void) {
@@ -303,7 +304,7 @@ static void banner(void) {
     puts(" | |_) | | (_| | (__|   <| |_) | | |_ "); putc('\n');
     puts(" |____/|_|\\__,_|\\___|_|\\_\\_.__/|_|\\__|"); putc('\n');
     setcolor(LIME,BLACK); puts("Blackbit OS 0.1  |  x86 protected-mode kernel"); putc('\n');
-    setcolor(DARK,BLACK); puts("Booted by GRUB Multiboot2. Built-in commands run in ring 0."); putc('\n');
+    setcolor(DARK,BLACK); puts("Booted by Blackbit ASM BIOS loader; Multiboot2 memory-map handoff."); putc('\n');
     puts("Type 'help' to explore the kernel command console."); putc('\n'); putc('\n');
     setcolor(LIGHT,BLACK);
 }

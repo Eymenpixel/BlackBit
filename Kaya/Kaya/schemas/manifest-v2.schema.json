@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eymenpixel/Kaya/blob/main/Kaya/schemas/manifest-v2.schema.json",
+  "title": "Kaya package manifest v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packageFormat", "name", "version", "description", "builds"],
+  "properties": {
+    "packageFormat": { "const": 2 },
+    "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" },
+    "displayName": { "type": "string", "maxLength": 128 },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$" },
+    "author": { "type": "string", "maxLength": 128 },
+    "description": { "type": "string", "maxLength": 512 },
+    "category": { "type": "string", "maxLength": 64 },
+    "dependencies": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}(?:[<>=].+)?$" } },
+    "plugins": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" } },
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["file.read", "file.write.data", "process.observe", "process.control", "network.client", "network.listen", "user.read", "user.manage", "disk.read", "disk.write", "disk.format", "display", "audio", "virtualization"] }
+    },
+    "builds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "language", "languageVersion", "runtime", "runtimeVersion", "entry"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" },
+          "language": { "type": "string", "pattern": "^[A-Za-z0-9+._-]{1,32}$" },
+          "languageVersion": { "type": "string", "pattern": "^[A-Za-z0-9+._*-]{1,32}$" },
+          "runtime": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" },
+          "runtimeVersion": { "type": "string", "pattern": "^[A-Za-z0-9+._*-]{1,32}$" },
+          "entry": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    }
+  }
+}

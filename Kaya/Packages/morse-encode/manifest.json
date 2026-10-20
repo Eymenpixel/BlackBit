@@ -1,0 +1,20 @@
+{
+  "name": "morse-encode",
+  "displayName": "Morse Encode",
+  "version": "1.0.0",
+  "author": "Kaya community",
+  "description": "Focused encoding utility: morse encode.",
+  "category": "encoding",
+  "runtime": "cpp",
+  "language": "cpp",
+  "languageVersion": "17",
+  "runtimeVersion": "0.2.0",
+  "entry": "main.cpp",
+  "supportFiles": [
+    "toolkit.hpp"
+  ],
+  "plugins": [
+    "cpp"
+  ],
+  "permissions": []
+}

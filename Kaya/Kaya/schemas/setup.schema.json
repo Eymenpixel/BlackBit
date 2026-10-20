@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eymenpixel/Kaya/blob/main/Kaya/schemas/setup.schema.json",
+  "title": "Kaya private setup profile",
+  "description": "Core-only runtime inventory and package build selection. Never expose this file to package processes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "runtimeInventory", "selectedBuilds"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "runtimeInventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["language", "languageVersion", "runtime", "runtimeVersion", "runtimeId"],
+        "properties": {
+          "language": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "languageVersion": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "runtime": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "runtimeVersion": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "runtimeId": { "type": "string", "minLength": 1, "maxLength": 128 }
+        }
+      }
+    },
+    "selectedBuilds": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["buildId", "language", "languageVersion", "runtime", "runtimeVersion"],
+        "properties": {
+          "buildId": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "language": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "languageVersion": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "runtime": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "runtimeVersion": { "type": "string", "minLength": 1, "maxLength": 32 }
+        }
+      }
+    }
+  }
+}

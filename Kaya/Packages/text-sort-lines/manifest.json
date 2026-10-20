@@ -1,0 +1,20 @@
+{
+  "name": "text-sort-lines",
+  "displayName": "Text Sort Lines",
+  "version": "1.0.0",
+  "author": "Kaya community",
+  "description": "Sort input lines lexicographically.",
+  "category": "text",
+  "runtime": "cpp",
+  "language": "cpp",
+  "languageVersion": "17",
+  "runtimeVersion": "0.2.0",
+  "entry": "main.cpp",
+  "supportFiles": [
+    "toolkit.hpp"
+  ],
+  "plugins": [
+    "cpp"
+  ],
+  "permissions": []
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+# Kaya plugin "wasm": runs a WebAssembly (WASI) program.
+# kaya calls:  run <abs/path/to/file.wasm> [args...]
+wasm="$1"; shift
+if command -v wasmtime >/dev/null 2>&1; then exec wasmtime run "$wasm" "$@"; fi
+if command -v wasmer >/dev/null 2>&1; then exec wasmer run "$wasm" -- "$@"; fi
+echo "wasm plugin: 'wasmtime' ya da 'wasmer' kurulu değil (bkz. https://wasmtime.dev)" >&2
+exit 127

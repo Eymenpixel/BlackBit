@@ -10,7 +10,7 @@ Bu depo; paket dosyalarını, depo indekslerini ve sistem tarafından kullanıla
 
 ## Kernel kaynak kodu
 
-Blackbit kernelinin kaynak kodu, bağımsız derleme ve QEMU komut testleriyle birlikte [`kernel/`](kernel/) altındadır. WSL2 Ubuntu üzerinde `cd kernel && make test` komutuyla doğrulanabilir.
+Blackbit kernelinin ASM BIOS bootloader’ı, kernel kaynak kodu ve QEMU komut testleri [`kernel/`](kernel/) altındadır. Kaya çekirdeği ve 200 paketlik snapshot [`Kaya/`](Kaya/) içindedir. WSL2 Ubuntu üzerinde `cd kernel && make test` ile doğrulanabilir; `make run` Kaya seri köprüsüyle başlatır.
 
 ## Paket Yöneticisi
 
