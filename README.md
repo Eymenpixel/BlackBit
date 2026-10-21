@@ -8,6 +8,10 @@ Blackbit Repository, Blackbit İşletim Sistemi için yayınlanan resmi paketler
 
 Bu depo; paket dosyalarını, depo indekslerini ve sistem tarafından kullanılan güncelleme verilerini içerir.
 
+## Kernel kaynak kodu
+
+Blackbit kernelinin ASM BIOS bootloader’ı, kernel kaynak kodu ve QEMU komut testleri [`kernel/`](kernel/) altındadır. WSL2 Ubuntu üzerinde `cd kernel && make test` ile doğrulanabilir. `make run`, QEMU’yu başlatır; Kaya paket yöneticisi entegrasyonu ayrı Kaya deposundan `BLACKBIT_KAYA_SOURCE` ile sağlanır (varsayılan: kardeş klasör `../Kaya`).
+
 ## Paket Yöneticisi
 
 Blackbit'in resmi paket yöneticisi:
