@@ -1,6 +1,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#if defined(__x86_64__)
+#define BLACKBIT_ARCH "x86_64"
+#define BLACKBIT_ARCH_DESC "x86_64 long-mode kernel"
+#elif defined(__i386__)
+#define BLACKBIT_ARCH "i686"
+#define BLACKBIT_ARCH_DESC "x86 protected-mode kernel"
+#else
+#define BLACKBIT_ARCH "unknown"
+#define BLACKBIT_ARCH_DESC "freestanding kernel"
+#endif
+
 #define COLS 80
 #define ROWS 25
 #define HISTORY 8
@@ -303,7 +314,7 @@ static void banner(void) {
     puts(" |  _ \\| |/ _` |/ __| |/ / '_ \\| | __|"); putc('\n');
     puts(" | |_) | | (_| | (__|   <| |_) | | |_ "); putc('\n');
     puts(" |____/|_|\\__,_|\\___|_|\\_\\_.__/|_|\\__|"); putc('\n');
-    setcolor(LIME,BLACK); puts("Blackbit OS 0.1  |  x86 protected-mode kernel"); putc('\n');
+    setcolor(LIME,BLACK); puts("Blackbit OS 0.1  |  "); puts(BLACKBIT_ARCH_DESC); putc('\n');
     setcolor(DARK,BLACK); puts("Multiboot2 memory-map handoff; Blackbit kernel console."); putc('\n');
     puts("Type 'help' to explore the kernel command console."); putc('\n'); putc('\n');
     setcolor(LIGHT,BLACK);
@@ -367,8 +378,8 @@ static void command(char *s) {
     char *cmd=argv[0];
     if(eq(cmd,"help"))help();
     else if(eq(cmd,"clear")||(eq(cmd,"wipe")&&argc==1))clear();
-    else if(eq(cmd,"about")||eq(cmd,"machine"))puts("Blackbit OS 0.1\nRing-0 x86 kernel console. RAM filesystem; changes reset on reboot.\n");
-    else if(eq(cmd,"uname")||eq(cmd,"kernelinfo"))puts("Blackbit blackbit-kernel 0.1 i686 bare-metal\n");
+    else if(eq(cmd,"about")||eq(cmd,"machine")){puts("Blackbit OS 0.1\nRing-0 ");puts(BLACKBIT_ARCH);puts(" kernel console. RAM filesystem; changes reset on reboot.\n");}
+    else if(eq(cmd,"uname")||eq(cmd,"kernelinfo")){puts("Blackbit blackbit-kernel 0.1 ");puts(BLACKBIT_ARCH);puts(" bare-metal\n");}
     else if(eq(cmd,"health")){puts("Kernel: running\nFilesystem: RAM-only\nScheduler: unavailable\nNetwork stack: unavailable\n");}
     else if(eq(cmd,"mem")||eq(cmd,"ramview")){puts("Usable RAM: ");print_u32((uint32_t)(usable_ram/1048576u));puts(" MiB\nKernel heap free: ");print_u32(heap_limit>heap_next?(uint32_t)((heap_limit-heap_next)/1024u):0);puts(" KiB\n");}
     else if(eq(cmd,"cpu")||eq(cmd,"coreview")){puts("CPU vendor: ");puts(cpu_name);putc('\n');}
